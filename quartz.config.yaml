@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: plev docs
+  pageTitle: plev
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
@@ -48,6 +48,11 @@ plugins:
         - frontmatter
         - filesystem
     order: 10
+  - source: ./plugins/plev-book
+    enabled: true
+    options:
+      repo: https://github.com/brennercruvinel/plev/blob/main
+    order: 15
   - source: "@quartz-community/syntax-highlighting"
     enabled: true
     options:
@@ -130,6 +135,8 @@ plugins:
     enabled: true
   - source: "@quartz-community/explorer"
     enabled: true
+    options:
+      title: Contents
     layout:
       position: left
       priority: 50
@@ -162,7 +169,7 @@ plugins:
       position: beforeBody
       priority: 20
   - source: "@quartz-community/tag-list"
-    enabled: false
+    enabled: true
     layout:
       position: beforeBody
       priority: 30
@@ -201,8 +208,7 @@ plugins:
     enabled: true
     options:
       links:
-        GitHub: https://github.com/jackyzha0/quartz
-        Discord Community: https://discord.gg/cRFFHYye7t
+        Built with Quartz: https://github.com/jackyzha0/quartz
     layout:
       position: footer
       priority: 50
@@ -229,7 +235,7 @@ plugins:
         - tags
         - aliases
       excludedProperties: []
-      hidePropertiesView: false
+      hidePropertiesView: true
       delimiters: ---
       language: yaml
     order: 5

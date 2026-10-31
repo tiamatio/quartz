@@ -1,3 +1,16 @@
 @use "./variables.scss" as *;
 
 // put your custom CSS here!
+
+// plev book: a folder without its own page (an ADR theme such as
+// "structure", a reference group such as "architecture") gets its title from
+// the folder name. Capitalize the first letter there and in the folder
+// crumbs only; a page title keeps the casing plev-book gave it ("plev docs").
+body[data-slug$="/index"] .article-title::first-letter,
+.breadcrumb-element:not(:last-child) > a::first-letter {
+  text-transform: uppercase;
+}
+
+.breadcrumb-element:not(:last-child) > a {
+  display: inline-block;
+}

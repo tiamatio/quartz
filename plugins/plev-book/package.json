@@ -1,0 +1,24 @@
+{
+  "name": "plev-book",
+  "version": "0.1.0",
+  "description": "Reads plev's docs/ as a book: README as the folder page, readable titles, relations as links, topics as tags, the docs' own dates",
+  "type": "module",
+  "license": "MIT",
+  "author": "Tiamati",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./package.json": "./package.json"
+  },
+  "quartz": {
+    "name": "plev-book",
+    "displayName": "plev book",
+    "category": "transformer",
+    "version": "0.1.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 15,
+    "defaultEnabled": true,
+    "defaultOptions": {}
+  }
+}

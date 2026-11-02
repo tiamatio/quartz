@@ -7,14 +7,11 @@ export const SECTIONS = {
   blog: "Blog",
   adr: "Decisions",
   tasks: "Tasks",
-  experiments: "Experiments",
-  learnings: "Learnings",
   research: "Research",
-  ref: "Reference",
 }
 
-/** "adr/index" -> "Decisions"; any other slug -> undefined */
+/** "adr/index" -> "Decisions", "Tasks/index" -> "Tasks"; any other slug -> undefined */
 export function sectionTitle(slug) {
   const m = typeof slug === "string" && slug.match(/^([^/]+)\/index$/)
-  return m ? SECTIONS[m[1]] : undefined
+  return m ? SECTIONS[m[1].toLowerCase()] : undefined
 }

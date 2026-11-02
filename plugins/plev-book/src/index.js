@@ -3,13 +3,15 @@
 // (explorer, breadcrumbs, search, graph, backlinks, table of contents) sees
 // the same titles, slugs and links.
 //
-//   README.md        -> the page of its folder (slug and links)
+//   a folder's note  -> the page of its folder (slug and links): the page
+//                       named like the folder, or a README
 //   title, headings  -> sentence case with known spellings (display only);
 //                       a section page takes the section's name
 //   running text     -> blocks and sentences start with a capital (display only)
 //   repeated "# title" at the top -> dropped, the page title already shows it
 //   topics           -> tags
-//   relations        -> a "Related" list of links (graph and backlinks follow)
+//   relations        -> a "Related" list of links (graph and backlinks follow),
+//                       unless docbase.py already wrote one into the page
 //   date / revised   -> created / modified (recorded when date is null)
 //   a link out of docs/ -> the file on the forge (option repo: the blob base URL)
 //   embed: FILE      -> the page shows FILE (ATLAS.toml, TERMS.toml); links to FILE open it
@@ -115,7 +117,7 @@ function rewriteLinks(tree, here, byPath, embeds, repo) {
         label.value = shownTitle(target)
       }
     }
-    node.url = readmeLink(node.url)
+    node.url = readmeLink(node.url, here)
   })
 }
 
@@ -126,7 +128,7 @@ function relatedSection(relations, here, selfId, byId) {
     const target = byId.get(id)
     if (!target || id === selfId || seen.has(id) || target.path === here) continue
     seen.add(id)
-    const url = readmeLink(linkBetween(here, target.path))
+    const url = readmeLink(linkBetween(here, target.path), here)
     const text = shownTitle(target)
     items.push({
       type: "listItem",
@@ -174,7 +176,9 @@ export default function PlevBook(opts) {
           rewriteLinks(tree, here, catalog.byPath, embeds, opts?.repo)
           if (typeof fm.embed === "string")
             tree.children.push(...embedNodes(contentDir, fm.embed, fm.embed_as))
-          if (Array.isArray(fm.relations) && fm.type !== "index" && typeof here === "string") {
+          // docbase.py ends a page with its Related list, both directions, as plain links
+          const written = String(file.value ?? "").includes("<!-- related:")
+          if (!written && Array.isArray(fm.relations) && fm.type !== "index" && typeof here === "string") {
             tree.children.push(...relatedSection(fm.relations, here, fm.id, catalog.byId))
           }
           data.frontmatter = fm

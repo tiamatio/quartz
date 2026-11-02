@@ -11,16 +11,13 @@ export const plevExplorer = {
       blog: 1,
       adr: 2,
       tasks: 3,
-      experiments: 4,
-      learnings: 5,
-      research: 6,
-      ref: 7,
-      atlas: 8,
-      terms: 9,
+      research: 4,
+      atlas: 5,
+      terms: 6,
     }
     if (a.slugSegments.length === 1 && b.slugSegments.length === 1) {
-      const ra = rank[a.slugSegment] ?? 99
-      const rb = rank[b.slugSegment] ?? 99
+      const ra = rank[(a.slugSegment || "").toLowerCase()] ?? 99
+      const rb = rank[(b.slugSegment || "").toLowerCase()] ?? 99
       if (ra !== rb) return ra - rb
     }
     if (
@@ -38,7 +35,8 @@ export const plevExplorer = {
     })
   },
   // the tag pages and the ADR template are not part of the reading path
-  filterFn: (node) => node.slugSegment !== "tags" && node.data?.slug !== "adr/template",
+  filterFn: (node) =>
+    node.slugSegment !== "tags" && (node.data?.slug || "").toLowerCase() !== "adr/template",
   // the sections keep short names; a folder without its own page (an ADR
   // theme) shows its name with a capital
   mapFn: (node) => {
@@ -47,13 +45,11 @@ export const plevExplorer = {
       blog: "Blog",
       adr: "Decisions",
       tasks: "Tasks",
-      experiments: "Experiments",
-      learnings: "Learnings",
       research: "Research",
-      ref: "Reference",
     }
-    if (node.slugSegments.length === 1 && label[node.slugSegment]) {
-      node.displayName = label[node.slugSegment]
+    const top = (node.slugSegment || "").toLowerCase()
+    if (node.slugSegments.length === 1 && label[top]) {
+      node.displayName = label[top]
       return
     }
     const name = node.displayName || ""

@@ -1,15 +1,24 @@
-// A folder's README.md is the page of that folder: its slug becomes
-// <folder>/index and every link to a README.md points at the folder, so
-// "tasks/task-98/README.md" opens as "tasks/task-98/".
+// A folder's note is the page of that folder: the page named like the
+// folder ("Tasks/task-98/task-98.md", "adr/adr.md"), or a README.md (the
+// home, docs/README.md). Its slug becomes <folder>/index and every link to it
+// points at the folder, so "Tasks/task-98/task-98.md" opens as "Tasks/task-98/".
 
 import path from "node:path"
 
 const README = /^readme\.md$/i
 
-/** "a/b/readme" -> "a/b/index", "readme" -> "index" */
+/** a docs path (with or without .md) whose file is its folder's note */
+export function isNote(p) {
+  if (typeof p !== "string") return false
+  const parts = p.replace(/\.md$/i, "").split("/")
+  const name = parts[parts.length - 1]
+  return /^readme$/i.test(name) || (parts.length >= 2 && name === parts[parts.length - 2])
+}
+
+/** "a/b/b" -> "a/b/index", "a/b/readme" -> "a/b/index", "readme" -> "index" */
 export function readmeSlug(slug) {
-  if (typeof slug !== "string") return slug
-  return slug.replace(/(^|\/)readme$/i, "$1index")
+  if (typeof slug !== "string" || !isNote(slug)) return slug
+  return slug.replace(/[^/]+$/, "index")
 }
 
 function isRelative(url) {
@@ -22,15 +31,20 @@ function isRelative(url) {
   )
 }
 
-/** "../x/README.md#a" -> "../x/#a" ; links elsewhere are returned as they are */
-export function readmeLink(url) {
+/**
+ * "../x/x.md#a" -> "../x/#a", "../x/README.md" -> "../x/"; `here`, the docs
+ * path of the page the link is on, tells a sibling note ("x.md" inside x/)
+ * from a page; links elsewhere are returned as they are
+ */
+export function readmeLink(url, here) {
   if (!isRelative(url)) return url
   const hash = url.indexOf("#")
   const target = hash < 0 ? url : url.slice(0, hash)
   const anchor = hash < 0 ? "" : url.slice(hash)
   const slash = target.lastIndexOf("/")
   const base = target.slice(slash + 1)
-  if (!README.test(base)) return url
+  const resolved = typeof here === "string" ? targetPath(here, target) : target
+  if (!README.test(base) && !(/\.md$/i.test(base) && isNote(resolved))) return url
   const dir = target.slice(0, slash + 1)
   return (dir === "" ? "./" : dir) + anchor
 }
@@ -47,7 +61,9 @@ export function targetPath(fromPath, url) {
   const target = url.split("#")[0]
   if (target === "") return undefined
   let p = path.posix.normalize(path.posix.join(path.posix.dirname(fromPath), target))
-  if (target.endsWith("/") || p === ".") p = path.posix.join(p, "README.md")
+  // a folder opens its note: the home's README, any other folder's page named like it
+  if (target.endsWith("/") || p === ".")
+    p = p === "." ? "README.md" : path.posix.join(p, `${path.posix.basename(p)}.md`)
   return p.startsWith("..") ? undefined : p
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "plev-book",
   "version": "0.1.0",
-  "description": "Reads plev's docs/ as a book: README as the folder page, readable titles, relations as links, topics as tags, the docs' own dates",
+  "description": "Reads plev's docs/ as a book: a folder's note as its page, readable titles, relations as links, topics as tags, the docs' own dates",
   "type": "module",
   "license": "MIT",
   "author": "Tiamati",

@@ -5,10 +5,14 @@
 > links each part of plev's `docs/` by relative symlink (outside plev those
 > links are empty). `content/blog/` holds the posts the monsters write, and
 > `content/atlas.md` and `content/terms.md` show `ATLAS.toml` and `TERMS.toml`.
-> `plugins/plev-book/` reads the tree as a book: a README is its folder's page,
-> titles and sentences read in sentence case (the docs keep their lowercase),
-> `relations` become links, `topics` become tags, and `date`/`revised` are
-> the dates shown. Run it with:
+> `plugins/plev-book/` reads the tree as a book: a folder's note (the page
+> named like its folder, `adr/adr.md`, `Tasks/<task>/<task>.md`; the home's
+> README) is its folder's page, titles and sentences read in sentence case
+> (the docs keep their lowercase), the Related list docbase.py writes at the
+> end of every page carries the graph and the backlinks, `topics` become tags,
+> and `date`/`revised` are the dates shown. `content/` links `adr`, `Research`
+> and `Tasks` by the names docs/ gives them; the URLs come out in lowercase.
+> Run it with:
 >
 > ```
 > npm ci && npm run install-plugins && npx quartz build --serve
